@@ -1,0 +1,9 @@
+imports:
+  - path: templates/deployment_template.jinja
+
+resources:
+  - name: mg-speech-to-text-deployment
+    type: templates/deployment_template.jinja
+    properties:
+      project_id: YOUR_PROJECT_ID
+      source_bucket: YOUR_SOURCE_BUCKET
