@@ -8,7 +8,7 @@ def transcribe_audio(event, context):
     if not audio_file.startswith('audio/'):
         return
 
-    gcs_uri = f'gs://{bucket_name}/{audio_file}'
+    gcs_uri = f'gs://{bucket_name}'
     client = speech.SpeechClient()
 
     audio = speech.RecognitionAudio(uri=gcs_uri)
@@ -28,6 +28,6 @@ def transcribe_audio(event, context):
         transcription += result.alternatives[0].transcript
 
     storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
+    bucket = storage_client.bucket('mg-speech-to-text-trascrzioni-bucket')
     blob = bucket.blob('traduzioni/' + os.path.basename(audio_file).replace('.wav', '.txt'))
     blob.upload_from_string(transcription)

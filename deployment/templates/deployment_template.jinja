@@ -1,41 +1,50 @@
+{% set project_id = properties["project_id"] %}
+{% set source_bucket = properties["source_bucket"] %}
+
 resources:
-- name: mg-speech-to-text-bucket
+- name: mg-speech-to-text-video-bucket
   type: storage.v1.bucket
   properties:
-    name: mg-speech-to-text
-    location: EU
+    name: mg-speech-to-text-video-bucket
+    location: europe-west1
+    storageClass: STANDARD
+
+- name: mg-speech-to-text-audio-bucket
+  type: storage.v1.bucket
+  properties:
+    name: mg-speech-to-text-audio-bucket
+    location: europe-west1
+    storageClass: STANDARD
+
+- name: mg-speech-to-text-traduzioni-bucket
+  type: storage.v1.bucket
+  properties:
+    name: mg-speech-to-text-traduzioni-bucket
+    location: europe-west1
     storageClass: STANDARD
 
 - name: extract-audio-function
   type: gcp-types/cloudfunctions-v1:projects.locations.functions
   properties:
-    parent: projects/{{ properties["project_id"] }}/locations/europe-west1
-    function:
-      name: projects/{{ properties["project_id"] }}/locations/europe-west1/functions/extract_audio_function
-      entryPoint: extract_audio
-      runtime: python39
-      sourceArchiveUrl: gs://{{ properties["source_bucket"] }}/extract_audio_function.zip
-      eventTrigger:
-        eventType: google.storage.object.finalize
-        resource: projects/_/buckets/mg-speech-to-text
-        eventFilters:
-        - attribute: name
-          value: ^video/.*
-      environmentVariables:
-        FFMPEG_PATH: '/usr/bin/ffmpeg'
+    parent: projects/{{ project_id }}/locations/europe-west1
+    function: extract_audio_function
+    entryPoint: extract_audio
+    runtime: python39
+    sourceArchiveUrl: gs://{{ source_bucket }}/extract_audio_function.zip
+    eventTrigger:
+      eventType: google.storage.object.finalize
+      resource: projects/_/buckets/mg-speech-to-text-video-bucket
+    environmentVariables:
+      FFMPEG_PATH: '/usr/bin/ffmpeg'
 
 - name: transcribe-audio-function
   type: gcp-types/cloudfunctions-v1:projects.locations.functions
   properties:
-    parent: projects/{{ properties["project_id"] }}/locations/europe-west1
-    function:
-      name: projects/{{ properties["project_id"] }}/locations/europe-west1/functions/transcribe_audio_function
-      entryPoint: transcribe_audio
-      runtime: python39
-      sourceArchiveUrl: gs://{{ properties["source_bucket"] }}/transcribe_audio_function.zip
-      eventTrigger:
-        eventType: google.storage.object.finalize
-        resource: projects/_/buckets/mg-speech-to-text
-        eventFilters:
-        - attribute: name
-          value: ^audio/.*
+    parent: projects/{{ project_id }}/locations/europe-west1
+    function: transcribe_audio_function
+    entryPoint: transcribe_audio
+    runtime: python39
+    sourceArchiveUrl: gs://{{ source_bucket }}/transcribe_audio_function.zip
+    eventTrigger:
+      eventType: google.storage.object.finalize
+      resource: projects/_/buckets/mg-speech-to-text-audio-bucket

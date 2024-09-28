@@ -75,18 +75,20 @@ Caricare gli archivi zip:
 gsutil cp extract_audio_function.zip gs://YOUR_SOURCE_BUCKET/
 gsutil cp transcribe_audio_function.zip gs://YOUR_SOURCE_BUCKET/
 ```
+Configurare il File di Deployment
 
-#### c. Modificare il File di Deployment
+### c. Utilizza il file di configurazione locale `config.local.yaml`:
 
-Nel file `deployment/deployment.yaml`, sostituire:
+```bash
+cp deployment/config.local.yaml deployment/config.yaml
+```
 
-- `YOUR_PROJECT_ID` con l'ID del vostro progetto.
-- `YOUR_SOURCE_BUCKET` con il nome del bucket temporaneo creato.
+Assicurati di aver sostituito `YOUR_PROJECT_ID` e `YOUR_SOURCE_BUCKET` con i valori corretti in `config.local.yaml`.
 
 #### d. Eseguire il Deployment
 
 ```bash
-gcloud deployment-manager deployments create mg-speech-to-text-deployment --config deployment/deployment.yaml
+gcloud deployment-manager deployments create mg-speech-to-text-deployment --config deployment/config.yaml
 ```
 
 ## Utilizzo

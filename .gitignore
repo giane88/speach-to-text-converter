@@ -22,7 +22,7 @@ lib/
 lib64/
 
 # Deployment Manager config
-deployment/config.yaml
+deployment/config.local.yaml
 
 # Source archives
 *.zip
